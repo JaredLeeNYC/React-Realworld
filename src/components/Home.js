@@ -5,11 +5,20 @@ import ArticlePreview from "./ArticlePreview";
 
 export default function Home() {
   const [articles, setarticles] = useState([]);
+  const [tags, settags] = useState([]);
 
   useEffect(() => {
     agent.Articles.all().then(res => {
-      console.log(res.articles);
+      // console.log(res.articles);
       setarticles(res.articles);
+    });
+    return () => {};
+  }, []);
+
+  useEffect(() => {
+    agent.Tags.getAll().then(res => {
+      console.log(res.tags);
+      settags(res.tags);
     });
     return () => {};
   }, []);
@@ -51,9 +60,11 @@ export default function Home() {
               <p>Popular Tags</p>
 
               <div className="tag-list">
-                <Link to="/" className="tag-pill tag-default">
-                  programming
-                </Link>
+                {tags.map((tag, index) => (
+                  <Link to="/" className="tag-pill tag-default" key={index}>
+                    {tag}
+                  </Link>
+                ))}
               </div>
             </div>
           </div>

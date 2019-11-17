@@ -7,8 +7,9 @@ import authContext from "../context/AuthContext";
 export default function Home() {
   const [articles, setarticles] = useState([]);
   const [tags, settags] = useState([]);
-  let [isGlobal, setisGlobal] = useState(true);
+  let [isGlobal, setisGlobal] = useState(false);
   const [auth] = useContext(authContext);
+  const [byTags, setbyTags] = useState([]);
 
   useEffect(() => {
     agent.Articles.all().then(res => {
@@ -30,10 +31,30 @@ export default function Home() {
       return (
         <ul className="nav nav-pills outline-active">
           <li className="nav-item">
-            <a className={"nav-link active"} onClick={youOrGlobal}>
+            <a
+              className={
+                props.byTags.length === 0 ? "nav-link active" : "nav-link"
+              }
+              onClick={youOrGlobal}
+            >
               Global Feed
             </a>
           </li>
+          {props.byTags.map(byTag => {
+            return (
+              <li className="nav-item" key={byTag}>
+                <a
+                  className={
+                    props.byTags[props.byTags.length - 1] === byTag
+                      ? "nav-link active"
+                      : "nav-link"
+                  }
+                >
+                  #{byTag}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       );
     }
@@ -41,7 +62,9 @@ export default function Home() {
       <ul className="nav nav-pills outline-active">
         <li className="nav-item">
           <a
-            className={props.isGlobal ? "nav-link" : "nav-link active"}
+            className={
+              props.isGlobal && !props.byTags ? "nav-link" : "nav-link active"
+            }
             onClick={youOrGlobal}
           >
             Your Feed
@@ -49,12 +72,29 @@ export default function Home() {
         </li>
         <li className="nav-item">
           <a
-            className={props.isGlobal ? "nav-link active" : "nav-link"}
+            className={
+              props.isGlobal && !props.byTags ? "nav-link active" : "nav-link"
+            }
             onClick={youOrGlobal}
           >
             Global Feed
           </a>
         </li>
+        {props.byTags.map(byTag => {
+          return (
+            <li className="nav-item" key={byTag}>
+              <a
+                className={
+                  props.byTags[props.byTags.length - 1] === byTag
+                    ? "nav-link active"
+                    : "nav-link"
+                }
+              >
+                #{byTag}
+              </a>
+            </li>
+          );
+        })}
       </ul>
     );
   };
@@ -63,13 +103,26 @@ export default function Home() {
     if (isGlobal) {
       agent.Articles.feed().then(res => {
         setarticles(res.articles);
+        setbyTags([]);
       });
     } else {
       agent.Articles.all().then(res => {
         setarticles(res.articles);
+        setbyTags([]);
       });
     }
     setisGlobal(!isGlobal);
+  }
+
+  function articlesByTag(tag) {
+    agent.Articles.byTag(tag, 1).then(res => {
+      let newByTags = [...byTags];
+      setarticles(res.articles);
+      if (byTags.indexOf(tag) === -1) {
+        console.log([...newByTags, tag]);
+        setbyTags([...newByTags, tag]);
+      }
+    });
   }
 
   return (
@@ -85,7 +138,7 @@ export default function Home() {
         <div className="row">
           <div className="col-md-9">
             <div className="feed-toggle">
-              <GlobalView isGlobal={isGlobal} />
+              <GlobalView isGlobal={isGlobal} byTags={byTags} />
             </div>
 
             {articles.map(article => (
@@ -99,9 +152,13 @@ export default function Home() {
 
               <div className="tag-list">
                 {tags.map((tag, index) => (
-                  <Link to="/" className="tag-pill tag-default" key={index}>
+                  <a
+                    className="tag-pill tag-default"
+                    key={index}
+                    onClick={() => articlesByTag(tag)}
+                  >
                     {tag}
-                  </Link>
+                  </a>
                 ))}
               </div>
             </div>

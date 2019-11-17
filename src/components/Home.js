@@ -17,7 +17,6 @@ export default function Home() {
 
   useEffect(() => {
     agent.Tags.getAll().then(res => {
-      console.log(res.tags);
       settags(res.tags);
     });
     return () => {};

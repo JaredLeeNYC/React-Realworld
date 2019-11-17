@@ -6,7 +6,7 @@ export default function CHeader() {
   const [Auth] = useContext(AuthContext);
 
   const LoggedOutView = props => {
-    if (!props.currentUser) {
+    if (!props.currentUser.username) {
       return (
         <ul className="nav navbar-nav pull-xs-right">
           <li className="nav-item">
@@ -20,7 +20,7 @@ export default function CHeader() {
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/login">
+            <Link className="nav-link" to="/register">
               Sign up
             </Link>
           </li>
@@ -31,7 +31,7 @@ export default function CHeader() {
   };
 
   const LoggedInView = props => {
-    if (props.currentUser) {
+    if (props.currentUser.username) {
       return (
         <ul className="nav navbar-nav pull-xs-right">
           <li className="nav-item">
@@ -63,8 +63,8 @@ export default function CHeader() {
           conduit
         </Link>
 
-        <LoggedOutView currentUser={Auth.username} />
-        <LoggedInView currentUser={Auth.username} />
+        <LoggedOutView currentUser={Auth} />
+        <LoggedInView currentUser={Auth} />
       </div>
     </nav>
   );

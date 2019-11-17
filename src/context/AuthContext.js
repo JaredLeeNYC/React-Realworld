@@ -1,5 +1,5 @@
 import { createContext } from "react";
 
-const AuthContext = createContext("lzbstar", () => {});
+const AuthContext = createContext({ email: "", password: "" });
 
 export default AuthContext;

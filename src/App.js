@@ -4,6 +4,7 @@ import CHeader from "./components/CHeader";
 import CFooter from "./components/CFooter";
 import Home from "./components/Home";
 import Login from "./components/Login";
+import Register from "./components/Register";
 import Profile from "./components/Profile";
 import Settings from "./components/Settings";
 import CreateAritcle from "./components/CreateArticle";
@@ -11,8 +12,7 @@ import Article from "./components/Article";
 import AuthContext from "./context/AuthContext";
 
 function App() {
-  const AuthHook = useState({ username: null });
-  console.log(AuthHook[0]);
+  const AuthHook = useState({});
 
   return (
     <div className="App">
@@ -21,6 +21,7 @@ function App() {
         <Router>
           <Home path="/" />
           <Login path="/login" />
+          <Register path="/register" />
           <Profile path="/profile" />
           <Settings path="/settings" />
           <CreateAritcle path="/createArticle" />

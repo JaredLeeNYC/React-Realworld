@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "@reach/router";
 import agent from "./agent";
 import ArticlePreview from "./ArticlePreview";
+import authContext from "../context/AuthContext";
 
 export default function Home() {
   const [articles, setarticles] = useState([]);
   const [tags, settags] = useState([]);
+  let [isGlobal, setisGlobal] = useState(true);
+  const [auth] = useContext(authContext);
 
   useEffect(() => {
     agent.Articles.all().then(res => {
@@ -22,6 +25,53 @@ export default function Home() {
     return () => {};
   }, []);
 
+  const GlobalView = props => {
+    if (!auth.username) {
+      return (
+        <ul className="nav nav-pills outline-active">
+          <li className="nav-item">
+            <a className={"nav-link active"} onClick={youOrGlobal}>
+              Global Feed
+            </a>
+          </li>
+        </ul>
+      );
+    }
+    return (
+      <ul className="nav nav-pills outline-active">
+        <li className="nav-item">
+          <a
+            className={props.isGlobal ? "nav-link" : "nav-link active"}
+            onClick={youOrGlobal}
+          >
+            Your Feed
+          </a>
+        </li>
+        <li className="nav-item">
+          <a
+            className={props.isGlobal ? "nav-link active" : "nav-link"}
+            onClick={youOrGlobal}
+          >
+            Global Feed
+          </a>
+        </li>
+      </ul>
+    );
+  };
+
+  function youOrGlobal() {
+    if (isGlobal) {
+      agent.Articles.feed().then(res => {
+        setarticles(res.articles);
+      });
+    } else {
+      agent.Articles.all().then(res => {
+        setarticles(res.articles);
+      });
+    }
+    setisGlobal(!isGlobal);
+  }
+
   return (
     <div className="home-page">
       <div className="banner">
@@ -35,18 +85,7 @@ export default function Home() {
         <div className="row">
           <div className="col-md-9">
             <div className="feed-toggle">
-              <ul className="nav nav-pills outline-active">
-                <li className="nav-item">
-                  <Link className="nav-link disabled" to="/">
-                    Your Feed
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link active" to="/">
-                    Global Feed
-                  </Link>
-                </li>
-              </ul>
+              <GlobalView isGlobal={isGlobal} />
             </div>
 
             {articles.map(article => (

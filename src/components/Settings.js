@@ -13,19 +13,17 @@ export default function Settings() {
   const passwordRef = useRef();
 
   useEffect(() => {
-    if (Auth.image) {
+    if (
+      Auth.image ||
+      Auth.username ||
+      Auth.bio ||
+      Auth.email ||
+      Auth.password
+    ) {
       imgRef.current.value = Auth.image;
-    }
-    if (Auth.username) {
       usernameRef.current.value = Auth.username;
-    }
-    if (Auth.bio) {
       bioRef.current.value = Auth.bio;
-    }
-    if (Auth.email) {
       emailRef.current.value = Auth.email;
-    }
-    if (Auth.password) {
       passwordRef.current.value = Auth.password;
     }
 

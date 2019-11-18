@@ -10,6 +10,7 @@ export default function Home() {
   let [isGlobal, setisGlobal] = useState(false);
   const [auth] = useContext(authContext);
   const [byTags, setbyTags] = useState([]);
+  const [tagOnClick, setTagOnClick] = useState("");
 
   useEffect(() => {
     agent.Articles.all().then(res => {
@@ -45,10 +46,9 @@ export default function Home() {
               <li className="nav-item" key={byTag}>
                 <a
                   className={
-                    props.byTags[props.byTags.length - 1] === byTag
-                      ? "nav-link active"
-                      : "nav-link"
+                    props.tagOnClick === byTag ? "nav-link active" : "nav-link"
                   }
+                  onClick={() => articlesByTag(byTag)}
                 >
                   #{byTag}
                 </a>
@@ -85,10 +85,9 @@ export default function Home() {
             <li className="nav-item" key={byTag}>
               <a
                 className={
-                  props.byTags[props.byTags.length - 1] === byTag
-                    ? "nav-link active"
-                    : "nav-link"
+                  props.tagOnClick === byTag ? "nav-link active" : "nav-link"
                 }
+                onClick={() => articlesByTag(byTag)}
               >
                 #{byTag}
               </a>
@@ -115,6 +114,7 @@ export default function Home() {
   }
 
   function articlesByTag(tag) {
+    setTagOnClick(tag);
     agent.Articles.byTag(tag, 1).then(res => {
       let newByTags = [...byTags];
       setarticles(res.articles);
@@ -138,7 +138,11 @@ export default function Home() {
         <div className="row">
           <div className="col-md-9">
             <div className="feed-toggle">
-              <GlobalView isGlobal={isGlobal} byTags={byTags} />
+              <GlobalView
+                isGlobal={isGlobal}
+                byTags={byTags}
+                tagOnClick={tagOnClick}
+              />
             </div>
 
             {articles.map(article => (

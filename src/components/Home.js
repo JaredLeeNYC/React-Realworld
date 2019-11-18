@@ -34,62 +34,8 @@ export default function Home() {
   }, []);
 
   const GlobalView = props => {
-    if (!auth.username) {
-      return (
-        <ul className="nav nav-pills outline-active">
-          {/* <li className="nav-item">
-            <Link
-              to=""
-              className={
-                props.byTags.length === 0 ? "nav-link active" : "nav-link"
-              }
-              onClick={youOrGlobal}
-            >
-              Global Feed
-            </Link>
-          </li> */}
-          {props.byTags.map(byTag => {
-            return (
-              <li className="nav-item" key={byTag}>
-                <Link
-                  to=""
-                  className={
-                    props.tagOnClick === byTag ? "nav-link active" : "nav-link"
-                  }
-                  onClick={() => articlesByTag(byTag)}
-                >
-                  #{byTag}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      );
-    }
     return (
       <ul className="nav nav-pills outline-active">
-        {/* <li className="nav-item">
-          <Link
-            to=""
-            className={
-              props.isGlobal && !props.byTags ? "nav-link" : "nav-link active"
-            }
-            onClick={youOrGlobal}
-          >
-            Your Feed
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link
-            to=""
-            className={
-              props.isGlobal && !props.byTags ? "nav-link active" : "nav-link"
-            }
-            onClick={youOrGlobal}
-          >
-            Global Feed
-          </Link>
-        </li> */}
         {props.byTags.map(byTag => {
           return (
             <li className="nav-item" key={byTag}>
@@ -100,7 +46,8 @@ export default function Home() {
                 }
                 onClick={() => articlesByTag(byTag)}
               >
-                #{byTag}
+                {byTag === "Your Feed" || byTag === "Global Feed" ? "" : "#"}
+                {byTag}
               </Link>
             </li>
           );
@@ -108,21 +55,6 @@ export default function Home() {
       </ul>
     );
   };
-
-  // function youOrGlobal() {
-  //   if (isGlobal) {
-  //     agent.Articles.feed().then(res => {
-  //       setarticles(res.articles);
-  //       setbyTags([]);
-  //     });
-  //   } else {
-  //     agent.Articles.all().then(res => {
-  //       setarticles(res.articles);
-  //       setbyTags([]);
-  //     });
-  //   }
-  //   setisGlobal(!isGlobal);
-  // }
 
   function articlesByTag(tag) {
     setTagOnClick(tag);

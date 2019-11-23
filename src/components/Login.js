@@ -1,6 +1,7 @@
 import React, { useRef, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import agent from "./agent";
+import { LOCAL_STORAGE_TOKEN } from "../constants/localstorage";
 
 export default function Login() {
   const emailRef = useRef();
@@ -12,6 +13,7 @@ export default function Login() {
       res => {
         setAuth(res.user);
         agent.setToken(res.user.token);
+        localStorage.setItem(LOCAL_STORAGE_TOKEN, res.user.token);
       }
     );
   }

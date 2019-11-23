@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Router } from "@reach/router";
 import CHeader from "./components/CHeader";
 import CFooter from "./components/CFooter";
@@ -10,9 +10,22 @@ import Settings from "./components/Settings";
 import CreateAritcle from "./components/CreateArticle";
 import Article from "./components/Article";
 import AuthContext from "./context/AuthContext";
+import { LOCAL_STORAGE_TOKEN } from "./constants/localstorage";
+import agent from "./components/agent";
 
 function App() {
   const AuthHook = useState({});
+  const storedToken = localStorage.getItem(LOCAL_STORAGE_TOKEN);
+
+  useEffect(() => {
+    if (storedToken) {
+      agent.setToken(storedToken);
+      agent.Auth.current().then(res => {
+        AuthHook[1](res.user);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="App">

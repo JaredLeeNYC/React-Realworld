@@ -1,6 +1,7 @@
 import React, { useContext, useRef, useEffect } from "react";
 import AuthContext from "../context/AuthContext";
 import agent from "./agent";
+import { LOCAL_STORAGE_TOKEN } from "../constants/localstorage";
 
 export default function Settings() {
   const [Auth, setAuth] = useContext(AuthContext);
@@ -40,6 +41,7 @@ export default function Settings() {
   function logout() {
     setAuth({});
     agent.setToken(null);
+    localStorage.setItem(LOCAL_STORAGE_TOKEN, null);
     imgRef.current.value = null;
     usernameRef.current.value = null;
     bioRef.current.value = null;

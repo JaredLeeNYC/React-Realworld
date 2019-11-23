@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from "react";
+import React, { useRef, useContext, useState } from "react";
 import AuthContext from "../context/AuthContext";
 import agent from "./agent";
 import { LOCAL_STORAGE_TOKEN } from "../constants/localstorage";
@@ -6,6 +6,7 @@ import { LOCAL_STORAGE_TOKEN } from "../constants/localstorage";
 export default function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
+  const [errList, setErrList] = useState([]);
   const [auth, setAuth] = useContext(AuthContext);
 
   function printEmail() {
@@ -14,6 +15,11 @@ export default function Login() {
         setAuth(res.user);
         agent.setToken(res.user.token);
         localStorage.setItem(LOCAL_STORAGE_TOKEN, res.user.token);
+      },
+      e => {
+        const newErrList = [...errList];
+        newErrList.push(e.response.text);
+        setErrList(newErrList);
       }
     );
   }
@@ -29,9 +35,9 @@ export default function Login() {
             </p>
 
             <ul className="error-messages">
-              <li>That email is already taken</li>
-              <li>{auth.email}</li>
-              <li>{auth.password}</li>
+              {errList.map((err, index) => {
+                return <li key={index}>{err}</li>;
+              })}
             </ul>
 
             <form>

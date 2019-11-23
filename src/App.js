@@ -18,7 +18,7 @@ function App() {
   const storedToken = localStorage.getItem(LOCAL_STORAGE_TOKEN);
 
   useEffect(() => {
-    if (storedToken) {
+    if (storedToken !== "null") {
       agent.setToken(storedToken);
       agent.Auth.current().then(res => {
         AuthHook[1](res.user);

@@ -1,6 +1,27 @@
-import React from "react";
+import React, { useRef, useContext } from "react";
+import agent from "./agent";
+import AuthContext from "../context/AuthContext";
+import { LOCAL_STORAGE_TOKEN } from "../constants/localstorage";
 
 export default function Register() {
+  const nameRef = useRef();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const [auth, setAuth] = useContext(AuthContext);
+
+  function signUp(e) {
+    e.preventDefault();
+    agent.Auth.register(
+      nameRef.current.value,
+      emailRef.current.value,
+      passwordRef.current.value
+    ).then(res => {
+      setAuth(res.user);
+      agent.setToken(res.user.token);
+      localStorage.setItem(LOCAL_STORAGE_TOKEN, res.user.token);
+    });
+  }
+
   return (
     <div className="auth-page">
       <div className="container page">
@@ -21,6 +42,7 @@ export default function Register() {
                   className="form-control form-control-lg"
                   type="text"
                   placeholder="Your Name"
+                  ref={nameRef}
                 />
               </fieldset>
               <fieldset className="form-group">
@@ -28,6 +50,7 @@ export default function Register() {
                   className="form-control form-control-lg"
                   type="text"
                   placeholder="Email"
+                  ref={emailRef}
                 />
               </fieldset>
               <fieldset className="form-group">
@@ -35,9 +58,13 @@ export default function Register() {
                   className="form-control form-control-lg"
                   type="password"
                   placeholder="Password"
+                  ref={passwordRef}
                 />
               </fieldset>
-              <button className="btn btn-lg btn-primary pull-xs-right">
+              <button
+                className="btn btn-lg btn-primary pull-xs-right"
+                onClick={signUp}
+              >
                 Sign up
               </button>
             </form>

@@ -5,7 +5,6 @@ import { LOCAL_STORAGE_TOKEN } from "../constants/localstorage";
 
 export default function Settings() {
   const [Auth, setAuth] = useContext(AuthContext);
-  console.log(Auth);
 
   const imgRef = useRef();
   const usernameRef = useRef();
@@ -59,7 +58,6 @@ export default function Settings() {
       email: emailRef.current.value,
       password: passwordRef.current.value
     }).then(res => {
-      console.log(res);
       setAuth(res.user);
     });
   }

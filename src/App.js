@@ -39,7 +39,7 @@ function App() {
           <Settings path="/settings" />
           <Editor path="/editor" />
           <Editor path="/editor/:slug" />
-          <Article path="/article/:id" />
+          <Article path="/article/:slug" />
         </Router>
 
         <CFooter />

@@ -1,30 +1,64 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "@reach/router";
+import agent from "./agent";
 
-export default function Article() {
+export default function Article({ slug }) {
+  const [article, setArticle] = useState({
+    author: {
+      slug: "",
+      title: "",
+      description: "",
+      body: "",
+      tagList: [],
+      createdAt: "",
+      updatedAt: "",
+      favorited: false,
+      favoritesCount: 0,
+      author: {
+        username: "",
+        bio: "",
+        image: "",
+        following: false
+      }
+    }
+  });
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    agent.Articles.get(slug).then(res => {
+      setArticle(res.article);
+      console.log(res.article.author.username);
+    });
+    agent.Comments.forArticle(slug).then(res => {
+      setComments(res.comments);
+    });
+  }, [slug]);
+
   return (
     <div className="article-page">
       <div className="banner">
         <div className="container">
-          <h1>How to build webapps that scale</h1>
+          <h1>{article.title}</h1>
 
           <div className="article-meta">
-            <a href="">
-              <img src="http://i.imgur.com/Qr71crq.jpg" />
-            </a>
+            <Link to="">
+              <img src={article.author.image} />
+            </Link>
             <div className="info">
-              <a href="" className="author">
-                Eric Simons
-              </a>
-              <span className="date">January 20th</span>
+              <Link to="" className="author">
+                {article.author.username}
+              </Link>
+              <span className="date">{article.createdAt}</span>
             </div>
             <button className="btn btn-sm btn-outline-secondary">
               <i className="ion-plus-round"></i>
-              &nbsp; Follow Eric Simons <span className="counter">(10)</span>
+              &nbsp; Follow {article.author.username}
             </button>
             &nbsp;&nbsp;
             <button className="btn btn-sm btn-outline-primary">
               <i className="ion-heart"></i>
-              &nbsp; Favorite Post <span className="counter">(29)</span>
+              &nbsp; Favorite Post{" "}
+              <span className="counter">{article.favoritesCount}</span>
             </button>
           </div>
         </div>
@@ -33,12 +67,9 @@ export default function Article() {
       <div className="container page">
         <div className="row article-content">
           <div className="col-md-12">
-            <p>
-              Web development technologies have evolved at an incredible clip
-              over the past few years.
-            </p>
-            <h2 id="introducing-ionic">Introducing RealWorld.</h2>
-            <p>It's a great solution for learning how other frameworks work.</p>
+            <p>{article.description}</p>
+            <h2 id="introducing-ionic">{article.title}</h2>
+            <p>{article.body}</p>
           </div>
         </div>
 
@@ -46,23 +77,24 @@ export default function Article() {
 
         <div className="article-actions">
           <div className="article-meta">
-            <a href="profile.html">
-              <img src="http://i.imgur.com/Qr71crq.jpg" />
-            </a>
+            <Link to="profile.html">
+              <img src={article.author.image} />
+            </Link>
             <div className="info">
-              <a href="" className="author">
+              <Link to="" className="author">
                 Eric Simons
-              </a>
-              <span className="date">January 20th</span>
+              </Link>
+              <span className="date">{article.createdAt}</span>
             </div>
             <button className="btn btn-sm btn-outline-secondary">
               <i className="ion-plus-round"></i>
-              &nbsp; Follow Eric Simons <span className="counter">(10)</span>
+              &nbsp; Follow {article.author.username}
             </button>
             &nbsp;
             <button className="btn btn-sm btn-outline-primary">
               <i className="ion-heart"></i>
-              &nbsp; Favorite Post <span className="counter">(29)</span>
+              &nbsp; Favorite Post{" "}
+              <span className="counter">{article.favoritesCount}</span>
             </button>
           </div>
         </div>
@@ -79,60 +111,39 @@ export default function Article() {
               </div>
               <div className="card-footer">
                 <img
-                  src="http://i.imgur.com/Qr71crq.jpg"
+                  src={article.author.image}
                   className="comment-author-img"
                 />
                 <button className="btn btn-sm btn-primary">Post Comment</button>
               </div>
             </form>
 
-            <div className="card">
-              <div className="card-block">
-                <p className="card-text">
-                  With supporting text below as a natural lead-in to additional
-                  content.
-                </p>
-              </div>
-              <div className="card-footer">
-                <a href="" className="comment-author">
-                  <img
-                    src="http://i.imgur.com/Qr71crq.jpg"
-                    className="comment-author-img"
-                  />
-                </a>
-                &nbsp;
-                <a href="" className="comment-author">
-                  Jacob Schmidt
-                </a>
-                <span className="date-posted">Dec 29th</span>
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="card-block">
-                <p className="card-text">
-                  With supporting text below as a natural lead-in to additional
-                  content.
-                </p>
-              </div>
-              <div className="card-footer">
-                <a href="" className="comment-author">
-                  <img
-                    src="http://i.imgur.com/Qr71crq.jpg"
-                    className="comment-author-img"
-                  />
-                </a>
-                &nbsp;
-                <a href="" className="comment-author">
-                  Jacob Schmidt
-                </a>
-                <span className="date-posted">Dec 29th</span>
-                <span className="mod-options">
-                  <i className="ion-edit"></i>
-                  <i className="ion-trash-a"></i>
-                </span>
-              </div>
-            </div>
+            {comments.map(comment => {
+              return (
+                <div className="card">
+                  <div className="card-block">
+                    <p className="card-text">{comment.body}</p>
+                  </div>
+                  <div className="card-footer">
+                    <Link to="" className="comment-author">
+                      <img
+                        src={comment.author.image}
+                        className="comment-author-img"
+                      />
+                    </Link>
+                    &nbsp;
+                    <Link to="" className="comment-author">
+                      {comment.author.username}
+                    </Link>
+                    <span className="date-posted">{comment.createdAt}</span>
+                    <span className="mod-options">
+                      <i className="ion-edit"></i>
+                      <i className="ion-trash-a"></i>
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

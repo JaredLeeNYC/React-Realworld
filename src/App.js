@@ -7,7 +7,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
 import Settings from "./components/Settings";
-import CreateAritcle from "./components/CreateArticle";
+import Editor from "./components/Editor";
 import Article from "./components/Article";
 import AuthContext from "./context/AuthContext";
 import { LOCAL_STORAGE_TOKEN } from "./constants/localstorage";
@@ -37,7 +37,8 @@ function App() {
           <Register path="/register" />
           <Profile path="/profile" />
           <Settings path="/settings" />
-          <CreateAritcle path="/createArticle" />
+          <Editor path="/editor" />
+          <Editor path="/editor/:slug" />
           <Article path="/article/:id" />
         </Router>
 

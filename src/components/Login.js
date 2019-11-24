@@ -17,8 +17,16 @@ export default function Login() {
         localStorage.setItem(LOCAL_STORAGE_TOKEN, res.user.token);
       },
       e => {
-        const newErrList = [...errList];
-        newErrList.push(e.response.text);
+        const newErrList = [];
+        for (var i in e.response.body.errors) {
+          if (e.response.body.errors[i].length > 1) {
+            for (var j in e.response.body.errors[i]) {
+              newErrList.push(i + " " + e.response.body.errors[i][j]);
+            }
+          } else {
+            newErrList.push(i + " " + e.response.body.errors[i]);
+          }
+        }
         setErrList(newErrList);
       }
     );

@@ -41,7 +41,7 @@ export default function CHeader() {
           </li>
 
           <li className="nav-item">
-            <Link className="nav-link" to="/createArticle">
+            <Link className="nav-link" to="/editor">
               <i className="ion-compose"></i>&nbsp;New Post
             </Link>
           </li>

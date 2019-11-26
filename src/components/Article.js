@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link } from "@reach/router";
 import agent from "./agent";
 import authContext from "../context/AuthContext";
+import marked from "marked";
 
 export default function Article({ slug }) {
   const [article, setArticle] = useState({
@@ -25,11 +26,12 @@ export default function Article({ slug }) {
   });
   const [comments, setComments] = useState([]);
   const [auth, setAuth] = useContext(authContext);
+  const [markup, setMarkup] = useState({ __html: "" });
 
   useEffect(() => {
     agent.Articles.get(slug).then(res => {
       setArticle(res.article);
-      console.log(res.article.author.username);
+      setMarkup({ __html: marked(res.article.body, { sanitize: true }) });
     });
     agent.Comments.forArticle(slug).then(res => {
       setComments(res.comments);
@@ -92,9 +94,8 @@ export default function Article({ slug }) {
       <div className="container page">
         <div className="row article-content">
           <div className="col-md-12">
-            <p>{article.description}</p>
-            <h2 id="introducing-ionic">{article.title}</h2>
-            <p>{article.body}</p>
+            <div dangerouslySetInnerHTML={markup}></div>
+            {console.log(markup)}
           </div>
         </div>
 

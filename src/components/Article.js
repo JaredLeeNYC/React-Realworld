@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "@reach/router";
 import agent from "./agent";
+import authContext from "../context/AuthContext";
 
 export default function Article({ slug }) {
   const [article, setArticle] = useState({
@@ -23,6 +24,7 @@ export default function Article({ slug }) {
     }
   });
   const [comments, setComments] = useState([]);
+  const [auth, setAuth] = useContext(authContext);
 
   useEffect(() => {
     agent.Articles.get(slug).then(res => {
@@ -33,6 +35,38 @@ export default function Article({ slug }) {
       setComments(res.comments);
     });
   }, [slug]);
+
+  const OwnArticleView = props => {
+    if (props.currentUser.username === article.author.username) {
+      return (
+        <>
+          <button className="btn btn-sm btn-outline-secondary">
+            <i className="ion-edit"></i>
+            &nbsp; Edit Article
+          </button>
+          &nbsp;
+          <button className="btn btn-outline-danger btn-sm">
+            <i className="ion-trash-a"></i>
+            Delete Article
+          </button>
+        </>
+      );
+    }
+    return (
+      <>
+        <button className="btn btn-sm btn-outline-secondary">
+          <i className="ion-plus-round"></i>
+          &nbsp; Follow {article.author.username}
+        </button>
+        &nbsp;
+        <button className="btn btn-sm btn-outline-primary">
+          <i className="ion-heart"></i>
+          &nbsp; Favorite Post{" "}
+          <span className="counter">{article.favoritesCount}</span>
+        </button>
+      </>
+    );
+  };
 
   return (
     <div className="article-page">
@@ -50,16 +84,7 @@ export default function Article({ slug }) {
               </Link>
               <span className="date">{article.createdAt}</span>
             </div>
-            <button className="btn btn-sm btn-outline-secondary">
-              <i className="ion-plus-round"></i>
-              &nbsp; Follow {article.author.username}
-            </button>
-            &nbsp;&nbsp;
-            <button className="btn btn-sm btn-outline-primary">
-              <i className="ion-heart"></i>
-              &nbsp; Favorite Post{" "}
-              <span className="counter">{article.favoritesCount}</span>
-            </button>
+            <OwnArticleView currentUser={auth} />
           </div>
         </div>
       </div>
@@ -90,7 +115,7 @@ export default function Article({ slug }) {
               <i className="ion-plus-round"></i>
               &nbsp; Follow {article.author.username}
             </button>
-            &nbsp;
+            &nbsp;&nbsp;
             <button className="btn btn-sm btn-outline-primary">
               <i className="ion-heart"></i>
               &nbsp; Favorite Post{" "}

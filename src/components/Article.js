@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link } from "@reach/router";
 import agent from "./agent";
 import authContext from "../context/AuthContext";
@@ -27,6 +27,7 @@ export default function Article({ slug }) {
   const [comments, setComments] = useState([]);
   const [auth, setAuth] = useContext(authContext);
   const [markup, setMarkup] = useState({ __html: "" });
+  const commentRef = useRef();
 
   useEffect(() => {
     agent.Articles.get(slug).then(res => {
@@ -37,6 +38,16 @@ export default function Article({ slug }) {
       setComments(res.comments);
     });
   }, [slug]);
+
+  function postComment(e) {
+    e.preventDefault();
+    agent.Comments.create(slug, { body: commentRef.current.value }).then(
+      res => {
+        setComments([res.comment, ...comments]);
+      }
+    );
+    commentRef.current.value = null;
+  }
 
   const OwnArticleView = props => {
     if (props.currentUser.username === article.author.username) {
@@ -108,7 +119,7 @@ export default function Article({ slug }) {
             </Link>
             <div className="info">
               <Link to="" className="author">
-                Eric Simons
+                {article.author.username}
               </Link>
               <span className="date">{article.createdAt}</span>
             </div>
@@ -133,6 +144,7 @@ export default function Article({ slug }) {
                   className="form-control"
                   placeholder="Write a comment..."
                   rows="3"
+                  ref={commentRef}
                 ></textarea>
               </div>
               <div className="card-footer">
@@ -140,13 +152,18 @@ export default function Article({ slug }) {
                   src={article.author.image}
                   className="comment-author-img"
                 />
-                <button className="btn btn-sm btn-primary">Post Comment</button>
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={postComment}
+                >
+                  Post Comment
+                </button>
               </div>
             </form>
 
             {comments.map(comment => {
               return (
-                <div className="card">
+                <div className="card" key={comment.body}>
                   <div className="card-block">
                     <p className="card-text">{comment.body}</p>
                   </div>

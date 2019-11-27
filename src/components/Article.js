@@ -106,7 +106,6 @@ export default function Article({ slug }) {
         <div className="row article-content">
           <div className="col-md-12">
             <div dangerouslySetInnerHTML={markup}></div>
-            {console.log(markup)}
           </div>
         </div>
 
@@ -180,8 +179,25 @@ export default function Article({ slug }) {
                     </Link>
                     <span className="date-posted">{comment.createdAt}</span>
                     <span className="mod-options">
-                      <i className="ion-edit"></i>
-                      <i className="ion-trash-a"></i>
+                      <i
+                        className={
+                          comment.author.username === auth.username
+                            ? "ion-trash-a"
+                            : null
+                        }
+                        onClick={() => {
+                          agent.Comments.delete(slug, comment.id).then(
+                            res => {
+                              const newComments = [...comments];
+                              newComments.shift();
+                              setComments(newComments);
+                            },
+                            e => {
+                              console.log(e.response.text);
+                            }
+                          );
+                        }}
+                      ></i>
                     </span>
                   </div>
                 </div>

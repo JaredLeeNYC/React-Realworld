@@ -35,7 +35,7 @@ function App() {
           <Home path="/" />
           <Login path="/login" />
           <Register path="/register" />
-          <Profile path="/profile" />
+          <Profile path="/profile/:username" />
           <Settings path="/settings" />
           <Editor path="/editor" />
           <Editor path="/editor/:slug" />

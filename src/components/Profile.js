@@ -12,6 +12,7 @@ export default function Profile({ username }) {
   });
   const [auth, setAuth] = useContext(Authcontext);
   const [articles, setArticles] = useState([]);
+  const [tagOnClick, setTagOnClick] = useState("My Articles");
 
   useEffect(() => {
     agent.Profile.get(username).then(
@@ -21,10 +22,16 @@ export default function Profile({ username }) {
       },
       e => console.log(e.response)
     );
-    agent.Articles.byAuthor(username).then(res => {
-      setArticles(res.articles);
-    });
-  }, [username]);
+    if (tagOnClick === "My Articles") {
+      agent.Articles.byAuthor(username).then(res => {
+        setArticles(res.articles);
+      });
+    } else {
+      agent.Articles.favoritedBy(username).then(res => {
+        setArticles(res.articles);
+      });
+    }
+  }, [tagOnClick, username]);
 
   return (
     <div className="profile-page">
@@ -50,14 +57,34 @@ export default function Profile({ username }) {
             <div className="articles-toggle">
               <ul className="nav nav-pills outline-active">
                 <li className="nav-item">
-                  <a className="nav-link active" href="">
+                  <Link
+                    className={
+                      tagOnClick === "My Articles"
+                        ? "nav-link active"
+                        : "nav-link"
+                    }
+                    to=""
+                    onClick={() => {
+                      setTagOnClick("My Articles");
+                    }}
+                  >
                     My Articles
-                  </a>
+                  </Link>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link" href="">
+                  <Link
+                    className={
+                      tagOnClick === "Favorited Articles"
+                        ? "nav-link active"
+                        : "nav-link"
+                    }
+                    to=""
+                    onClick={() => {
+                      setTagOnClick("Favorited Articles");
+                    }}
+                  >
                     Favorited Articles
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>

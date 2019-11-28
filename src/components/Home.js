@@ -12,6 +12,7 @@ export default function Home() {
   const [tagOnClick, setTagOnClick] = useState("Global Feed");
   const [range, setrange] = useState([]);
   const [page, setpage] = useState(0);
+  const [isFresh, setIsFresh] = useState(false);
 
   useEffect(() => {
     agent.Tags.getAll().then(res => {
@@ -24,6 +25,7 @@ export default function Home() {
     const newByTags = [...byTags];
     let newTagOnClick = tagOnClick;
     const newRange = range.slice(0, 0);
+
     if (auth.username) {
       if (newByTags.indexOf("Your Feed") === -1) {
         newByTags.splice(1, 0, "Your Feed");
@@ -73,7 +75,11 @@ export default function Home() {
     setbyTags(newByTags);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tagOnClick, page]);
+  }, [tagOnClick, page, isFresh]);
+
+  function refresh() {
+    setIsFresh(!isFresh);
+  }
 
   const GlobalView = props => {
     return (
@@ -157,7 +163,11 @@ export default function Home() {
             </div>
 
             {articles.map(article => (
-              <ArticlePreview article={article} key={article.slug} />
+              <ArticlePreview
+                article={article}
+                key={article.slug}
+                refresh={refresh}
+              />
             ))}
             <Pagination range={range} />
           </div>

@@ -11,7 +11,7 @@ export default function CHeader() {
         <ul className="nav navbar-nav pull-xs-right">
           <li className="nav-item">
             <Link className="nav-link active" to="/">
-              Home {Auth.username}
+              Home
             </Link>
           </li>
           <li className="nav-item">

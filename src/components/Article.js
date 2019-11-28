@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { Link } from "@reach/router";
+import { Link, navigate } from "@reach/router";
 import agent from "./agent";
 import authContext from "../context/AuthContext";
 import marked from "marked";
@@ -53,12 +53,20 @@ export default function Article({ slug }) {
     if (props.currentUser.username === article.author.username) {
       return (
         <>
-          <button className="btn btn-sm btn-outline-secondary">
-            <i className="ion-edit"></i>
-            &nbsp; Edit Article
-          </button>
+          <Link to={`/editor/${article.slug}`}>
+            <button className="btn btn-sm btn-outline-secondary">
+              <i className="ion-edit"></i>
+              &nbsp; Edit Article
+            </button>
+          </Link>
           &nbsp;
-          <button className="btn btn-outline-danger btn-sm">
+          <button
+            className="btn btn-outline-danger btn-sm"
+            onClick={() => {
+              agent.Articles.del(article.slug);
+              navigate("/");
+            }}
+          >
             <i className="ion-trash-a"></i>
             Delete Article
           </button>

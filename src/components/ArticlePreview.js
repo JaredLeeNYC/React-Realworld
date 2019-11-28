@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "@reach/router";
+import agent from "./agent";
 
-export default function ArticlePreview({ article }) {
+export default function ArticlePreview({ article, refresh }) {
   return (
     <div className="article-preview">
       <div className="article-meta">
@@ -18,7 +19,14 @@ export default function ArticlePreview({ article }) {
           </Link>
           <span className="date">{article.createdAt}</span>
         </div>
-        <button className="btn btn-outline-primary btn-sm pull-xs-right">
+        <button
+          className="btn btn-outline-primary btn-sm pull-xs-right"
+          onClick={() => {
+            agent.Articles.favorite(article.slug).then(res => {
+              refresh();
+            });
+          }}
+        >
           <i className="ion-heart"></i> {article.favoritesCount}
         </button>
       </div>

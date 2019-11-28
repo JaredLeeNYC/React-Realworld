@@ -93,20 +93,23 @@ export default function Profile({ username }) {
               return (
                 <div className="article-preview" key={article.slug}>
                   <div className="article-meta">
-                    <Link to="">
+                    <Link to={`/profile/${username}`}>
                       <img src={article.author.image} />
                     </Link>
                     <div className="info">
-                      <a href="" className="author">
+                      <Link to={`/profile/${username}`} className="author">
                         {article.author.username}
-                      </a>
+                      </Link>
                       <span className="date">{article.createdAt}</span>
                     </div>
                     <button className="btn btn-outline-primary btn-sm pull-xs-right">
                       <i className="ion-heart"></i> {article.favoritesCount}
                     </button>
                   </div>
-                  <Link to="" className="preview-link">
+                  <Link
+                    to={`/article/${article.slug}`}
+                    className="preview-link"
+                  >
                     <h1>{article.title}</h1>
                     <p>{article.description}</p>
                     <span>Read more...</span>

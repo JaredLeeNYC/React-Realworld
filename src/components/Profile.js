@@ -33,6 +33,44 @@ export default function Profile({ username }) {
     }
   }, [tagOnClick, username]);
 
+  const FollowButton = () => {
+    if (profile.following) {
+      return (
+        <button
+          className="btn btn-sm btn-outline-secondary"
+          onClick={() => {
+            agent.Profile.unfollow(profile.username).then(() => {
+              setProfile({
+                ...profile,
+                following: false
+              });
+            });
+          }}
+        >
+          <i className="ion-plus-round"></i>
+          &nbsp; unFollow {profile.username}
+        </button>
+      );
+    } else {
+      return (
+        <button
+          className="btn btn-sm btn-outline-secondary"
+          onClick={() => {
+            agent.Profile.follow(profile.username).then(() => {
+              setProfile({
+                ...profile,
+                following: true
+              });
+            });
+          }}
+        >
+          <i className="ion-plus-round"></i>
+          &nbsp; Follow {profile.username}
+        </button>
+      );
+    }
+  };
+
   return (
     <div className="profile-page">
       <div className="user-info">
@@ -42,10 +80,7 @@ export default function Profile({ username }) {
               <img src={profile.image} className="user-img" />
               <h4>{profile.username}</h4>
               <p>{profile.bio}</p>
-              <button className="btn btn-sm btn-outline-secondary action-btn">
-                <i className="ion-plus-round"></i>
-                &nbsp; Follow {profile.username}
-              </button>
+              <FollowButton />
             </div>
           </div>
         </div>

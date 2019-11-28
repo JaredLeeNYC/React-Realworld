@@ -49,6 +49,50 @@ export default function Article({ slug }) {
     commentRef.current.value = null;
   }
 
+  const FollowButton = () => {
+    if (article.author.following) {
+      return (
+        <button
+          className="btn btn-sm btn-outline-secondary"
+          onClick={() => {
+            agent.Profile.unfollow(article.author.username).then(() => {
+              setArticle({
+                ...article,
+                author: {
+                  ...article.author,
+                  following: false
+                }
+              });
+            });
+          }}
+        >
+          <i className="ion-plus-round"></i>
+          &nbsp; unFollow {article.author.username}
+        </button>
+      );
+    } else {
+      return (
+        <button
+          className="btn btn-sm btn-outline-secondary"
+          onClick={() => {
+            agent.Profile.follow(article.author.username).then(() => {
+              setArticle({
+                ...article,
+                author: {
+                  ...article.author,
+                  following: true
+                }
+              });
+            });
+          }}
+        >
+          <i className="ion-plus-round"></i>
+          &nbsp; Follow {article.author.username}
+        </button>
+      );
+    }
+  };
+
   const OwnArticleView = props => {
     if (props.currentUser.username === article.author.username) {
       return (
@@ -73,14 +117,22 @@ export default function Article({ slug }) {
         </>
       );
     }
+
     return (
       <>
-        <button className="btn btn-sm btn-outline-secondary">
-          <i className="ion-plus-round"></i>
-          &nbsp; Follow {article.author.username}
-        </button>
+        <FollowButton />
         &nbsp;
-        <button className="btn btn-sm btn-outline-primary">
+        <button
+          className="btn btn-sm btn-outline-primary"
+          onClick={() => {
+            agent.Articles.favorite(article.slug).then(res => {
+              setArticle({
+                ...article,
+                favoritesCount: ++article.favoritesCount
+              });
+            });
+          }}
+        >
           <i className="ion-heart"></i>
           &nbsp; Favorite Post{" "}
           <span className="counter">{article.favoritesCount}</span>
@@ -130,12 +182,19 @@ export default function Article({ slug }) {
               </Link>
               <span className="date">{article.createdAt}</span>
             </div>
-            <button className="btn btn-sm btn-outline-secondary">
-              <i className="ion-plus-round"></i>
-              &nbsp; Follow {article.author.username}
-            </button>
+            <FollowButton />
             &nbsp;&nbsp;
-            <button className="btn btn-sm btn-outline-primary">
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={() => {
+                agent.Articles.favorite(article.slug).then(res => {
+                  setArticle({
+                    ...article,
+                    favoritesCount: ++article.favoritesCount
+                  });
+                });
+              }}
+            >
               <i className="ion-heart"></i>
               &nbsp; Favorite Post{" "}
               <span className="counter">{article.favoritesCount}</span>

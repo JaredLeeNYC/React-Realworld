@@ -26,7 +26,10 @@ function App() {
         console.log(222222222222);
         setIsLoading(false);
       });
+    } else {
+      setIsLoading(false);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

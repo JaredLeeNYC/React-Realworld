@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "@reach/router";
 import agent from "./agent";
 
@@ -22,7 +22,7 @@ export default function ArticlePreview({ article, refresh }) {
         <button
           className="btn btn-outline-primary btn-sm pull-xs-right"
           onClick={() => {
-            agent.Articles.favorite(article.slug).then(res => {
+            agent.Articles.favorite(article.slug).then(() => {
               refresh();
             });
           }}

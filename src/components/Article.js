@@ -6,26 +6,24 @@ import marked from "marked";
 
 export default function Article({ slug }) {
   const [article, setArticle] = useState({
+    slug: "",
+    title: "",
+    description: "",
+    body: "",
+    tagList: [],
+    createdAt: "",
+    updatedAt: "",
+    favorited: false,
+    favoritesCount: 0,
     author: {
-      slug: "",
-      title: "",
-      description: "",
-      body: "",
-      tagList: [],
-      createdAt: "",
-      updatedAt: "",
-      favorited: false,
-      favoritesCount: 0,
-      author: {
-        username: "",
-        bio: "",
-        image: "",
-        following: false
-      }
+      username: "",
+      bio: "",
+      image: "",
+      following: false
     }
   });
   const [comments, setComments] = useState([]);
-  const [auth, setAuth] = useContext(authContext);
+  const [auth] = useContext(authContext);
   const [markup, setMarkup] = useState({ __html: "" });
   const commentRef = useRef();
 
@@ -166,6 +164,21 @@ export default function Article({ slug }) {
         <div className="row article-content">
           <div className="col-md-12">
             <div dangerouslySetInnerHTML={markup}></div>
+            <ul className="tag-list">
+              {article.tagList.map(tag => {
+                return (
+                  <li>
+                    <Link
+                      to="/"
+                      className="router-link-active tag-default tag-pill tag-outline"
+                      key={tag}
+                    >
+                      {tag}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </div>
 

@@ -2,6 +2,7 @@ import React, { useRef, useContext, useState } from "react";
 import agent from "./agent";
 import AuthContext from "../context/AuthContext";
 import { LOCAL_STORAGE_TOKEN } from "../constants/localstorage";
+import { navigate } from "@reach/router";
 
 export default function Register() {
   const nameRef = useRef();
@@ -22,6 +23,7 @@ export default function Register() {
         setAuth(res.user);
         agent.setToken(res.user.token);
         localStorage.setItem(LOCAL_STORAGE_TOKEN, res.user.token);
+        navigate("/");
       },
       e => {
         const newErrList = [];

@@ -2,6 +2,7 @@ import React, { useContext, useRef, useEffect } from "react";
 import AuthContext from "../context/AuthContext";
 import agent from "./agent";
 import { LOCAL_STORAGE_TOKEN } from "../constants/localstorage";
+import { navigate } from "@reach/router";
 
 export default function Settings() {
   const [Auth, setAuth] = useContext(AuthContext);
@@ -59,6 +60,7 @@ export default function Settings() {
       password: passwordRef.current.value
     }).then(res => {
       setAuth(res.user);
+      navigate("/");
     });
   }
 

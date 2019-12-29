@@ -5,10 +5,10 @@ import ArticlePreview from "./ArticlePreview";
 import authContext from "../context/AuthContext";
 
 export default function Home() {
-  const [articles, setarticles] = useState([]);
-  const [tags, settags] = useState([]);
+  const [articles, setArticles] = useState([]);
+  const [tags, setTags] = useState([]);
   const [auth] = useContext(authContext);
-  const [byTags, setbyTags] = useState(["Global Feed"]);
+  const [tabs, setTabs] = useState(["Global Feed"]);
   const [tagOnClick, setTagOnClick] = useState("Global Feed");
   const [range, setrange] = useState([]);
   const [page, setpage] = useState(0);
@@ -16,24 +16,25 @@ export default function Home() {
 
   useEffect(() => {
     agent.Tags.getAll().then(res => {
-      settags(res.tags);
+      console.log(res);
+      setTags(res.tags);
     });
     return () => {};
   }, []);
 
   useEffect(() => {
-    const newByTags = [...byTags];
+    const newTabs = [...tabs];
     let newTagOnClick = tagOnClick;
     const newRange = range.slice(0, 0);
 
     if (auth.username) {
-      if (newByTags.indexOf("Your Feed") === -1) {
-        newByTags.splice(1, 0, "Your Feed");
+      if (newTabs.indexOf("Your Feed") === -1) {
+        newTabs.splice(1, 0, "Your Feed");
         newTagOnClick = "Your Feed";
       }
     } else {
-      if (newByTags.indexOf("Your Feed") !== -1) {
-        newByTags.splice(1, 1);
+      if (newTabs.indexOf("Your Feed") !== -1) {
+        newTabs.splice(1, 1);
         newTagOnClick = "Global Feed";
       }
     }
@@ -41,7 +42,7 @@ export default function Home() {
     switch (newTagOnClick) {
       case "Global Feed":
         agent.Articles.all(page).then(res => {
-          setarticles(res.articles);
+          setArticles(res.articles);
           for (let i = 0; i < Math.ceil(res.articlesCount / 10); ++i) {
             newRange.push(i + 1);
           }
@@ -50,7 +51,7 @@ export default function Home() {
         break;
       case "Your Feed":
         agent.Articles.feed().then(res => {
-          setarticles(res.articles);
+          setArticles(res.articles);
           for (let i = 0; i < Math.ceil(res.articlesCount / 10); ++i) {
             newRange.push(i + 1);
           }
@@ -59,11 +60,11 @@ export default function Home() {
 
         break;
       default:
-        if (newByTags.indexOf(newTagOnClick) === -1) {
-          newByTags.push(newTagOnClick);
+        if (newTabs.indexOf(newTagOnClick) === -1) {
+          newTabs.push(newTagOnClick);
         }
         agent.Articles.byTag(newTagOnClick, page).then(res => {
-          setarticles(res.articles);
+          setArticles(res.articles);
           for (let i = 0; i < Math.ceil(res.articlesCount / 10); ++i) {
             newRange.push(i + 1);
           }
@@ -72,7 +73,7 @@ export default function Home() {
     }
 
     setTagOnClick(newTagOnClick);
-    setbyTags(newByTags);
+    setTabs(newTabs);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tagOnClick, page, isFresh]);
@@ -84,15 +85,15 @@ export default function Home() {
   const GlobalView = props => {
     return (
       <ul className="nav nav-pills outline-active">
-        {props.byTags.map(byTag => {
+        {props.tabs.map(byTag => {
           return (
             <li className="nav-item" key={byTag}>
               <Link
                 to=""
                 className={
                   props.tagOnClick === byTag ||
-                  byTags.length === 1 ||
-                  (byTags.length === 2 &&
+                  tabs.length === 1 ||
+                  (tabs.length === 2 &&
                     byTag === "Your Feed" &&
                     !props.tagOnClick)
                     ? "nav-link active"
@@ -159,16 +160,20 @@ export default function Home() {
         <div className="row">
           <div className="col-md-9">
             <div className="feed-toggle">
-              <GlobalView byTags={byTags} tagOnClick={tagOnClick} />
+              <GlobalView tabs={tabs} tagOnClick={tagOnClick} />
             </div>
 
-            {articles.map(article => (
-              <ArticlePreview
-                article={article}
-                key={article.slug}
-                refresh={refresh}
-              />
-            ))}
+            {articles.length === 0 ? (
+              <p style={{ marginTop: "70px" }}>No articles yet ...</p>
+            ) : (
+              articles.map(article => (
+                <ArticlePreview
+                  article={article}
+                  key={article.slug}
+                  refresh={refresh}
+                />
+              ))
+            )}
             <Pagination range={range} />
           </div>
 
@@ -187,6 +192,22 @@ export default function Home() {
                     {tag}
                   </Link>
                 ))}
+              </div>
+              <div className="tag-list">
+                <select
+                  defaultValue="japan"
+                  onChange={e => articlesByTag(e.target.value)}
+                >
+                  {tags.map((tag, index) => (
+                    <option
+                      className="tag-pill tag-default"
+                      key={index}
+                      vlaue={tag}
+                    >
+                      {tag}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
